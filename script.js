@@ -1,79 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        .over {
-            background-color: orange;
-        }
-        .selected {
-            background-color: green;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        #buttons {
-            margin-top: 10px;
-        }
-        #buttons button {
-            margin-right: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div id="buttons">
-        <button onclick="filterTable('Gryffindor')">Gryffindor</button>
-        <button onclick="filterTable('Hufflepuff')">Hufflepuff</button>
-        <button onclick="filterTable('Ravenclaw')">Ravenclaw</button>
-        <button onclick="filterTable('Slytherin')">Slytherin</button>
-        <button onclick="showAllRows()">Reset</button>
-    </div>
-    <table border='1'>
-        <tr>
-            <th>name</th>
-            <th>role</th>
-            <th>house</th>
-            <th>gender</th>
-            <th>alignment</th>
-        </tr>
-        <tr>
-            <td>Albus Dumbledore</td>
-            <td>staff</td>
-            <td>Gryffindor</td>
-            <td>m</td>
-            <td>good</td>
-        </tr>
-        <!-- Other character rows -->
-    </table>
+// Generate filter buttons
+var houses = []; 
+$.each(characters, function(index, character) {
+  if(!houses.includes(character.house)) {
+    houses.push(character.house);
 
-    <script>
-        function filterTable(house) {
-            var rows = document.getElementsByTagName('tr');
-            for (var i = 1; i < rows.length; i++) {
-                var cell = rows[i].getElementsByTagName('td')[2];
-                if (cell.innerText === house) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
-                }
-            }
-        }
+    $('#buttons').append(`
+      <button class="filter" data-house="${character.house}">
+        ${character.house} 
+      </button>
+    `); 
+  }
+});
 
-        function showAllRows() {
-            var rows = document.getElementsByTagName('tr');
-            for (var i = 1; i < rows.length; i++) {
-                rows[i].style.display = '';
-            }
-        }
-    </script>
-</body>
-</html>
+// Add "All" filter button 
+$('#buttons').prepend(`
+  <button class="filter" data-house="All">All</button>
+`);
 
+// Filter table rows on button click
+$('.filter').click(function() {
+
+  // Hide all rows first
+  $('tr').hide();
+
+  var house = $(this).data('house');
+
+  $('tr').each(function() {
+    if(house == 'All' || $(this).find('td:eq(2)').text() == house) {
+      $(this).show();
+    }
+  });
+
+  // Update row colors after filtering
+  $('tr:visible:odd').removeClass('even').addClass('odd');
+  $('tr:visible:even').removeClass('odd').addClass('even');
+
+});
