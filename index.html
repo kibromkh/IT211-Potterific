@@ -1,10 +1,18 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-  <link rel="stylesheet" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
+
+<style>
+  .odd {
+    background-color: #f2f2f2; 
+  }
+
+  .even {
+    background-color: #e6e6e6;
+  }
+</style>
 
 <body>
 
@@ -12,15 +20,12 @@
 
   <table border='1'>
     <tr>
-      <th>Name</th>
-      <th>Role</th>
-      <th>House</th>
-      <th>Gender</th>
-      <th>Alignment</th>
+      <th>name</th>
+      <th>role</th> 
+      <th>house</th>
+      <th>gender</th>
+      <th>alignment</th>
     </tr>
-    
-    <!-- Table rows populated by JS -->
-    
   </table>
 
   <button id="reset">Reset</button>
@@ -29,18 +34,65 @@
 
 <script>
 
-// Array of characters
+// Array of characters 
 var characters = [
   {name:"Harry Potter", role:"Student", house:"Gryffindor", gender:"M", alignment:"Good"},
   {name:"Hermione Granger", role:"Student", house:"Gryffindor", gender:"F", alignment:"Good"},
   {name:"Ron Weasley", role:"Student", house:"Gryffindor", gender:"M", alignment:"Good"},
+  {name:"Draco Malfoy", role:"Student", house:"Slytherin", gender:"M", alignment:"Evil"},
 ];
 
-// Code to render table rows from data 
+// Render table rows
+var tableBody = $('table');
+$.each(characters, function(index, character) {
+  // Alternate row coloring
+  var rowClass = index % 2 == 0 ? 'odd' : 'even';
 
-// Code to generate filter buttons
+  var row = `
+    <tr class="${rowClass}">
+      <td>${character.name}</td>
+      <td>${character.role}</td>
+      <td>${character.house}</td>
+      <td>${character.gender}</td>
+      <td>${character.alignment}</td>
+    </tr>
+  `;
 
-// Event handlers for filtering and reset
+  tableBody.append(row); 
+});
+
+// Generate filter buttons
+var houses = [];
+$.each(characters, function(index, character) {
+  if(!houses.includes(character.house)) {
+    houses.push(character.house);
+
+    $('#buttons').append(`
+      <button class="filter" data-house="${character.house}">
+        ${character.house}
+      </button>
+    `);
+  }
+});
+
+// Filter table rows on button click
+$('.filter').click(function() {
+  var house = $(this).data('house');
+
+  $('tr').each(function() {
+    if($(this).find('td:eq(2)').text() != house && house != 'All') {
+      $(this).hide();
+    }
+    else {
+      $(this).show();
+    }
+  });
+});
+
+// Reset table to show all rows
+$('#reset').click(function() {
+  $('tr').show(); 
+})
 
 </script>
 
